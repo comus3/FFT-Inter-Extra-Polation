@@ -98,15 +98,24 @@ if __name__ == "__main__":
     import tkinter as tk
     from tkinter import ttk
 
+    def create_function_reference(function_name):
+        functionLibrary = globals()
+        
+        if function_name in functionLibrary:
+            new_function = functionLibrary[function_name]
+            return new_function
+        else:
+            raise ValueError(f"Function '{function_name}' does not exist.")
+
     def generate_and_plot():
         # Retrieve values from input fields and perform the generation and plotting
         selected_option = option_var.get()
-        start_in = int(start_in_entry.get())
-        end_in = int(end_in_entry.get())
-        step_in = int(step_in_entry.get())
-        start_out = int(start_out_entry.get())
-        end_out = int(end_out_entry.get())
-        step_out = int(step_out_entry.get())
+        start_in = float(start_in_entry.get())
+        end_in = float(end_in_entry.get())
+        step_in = float(step_in_entry.get())
+        start_out = float(start_out_entry.get())
+        end_out = float(end_out_entry.get())
+        step_out = float(step_out_entry.get())
 
         print("Selected Option:", selected_option)
         print("Start In:", start_in)
@@ -116,8 +125,15 @@ if __name__ == "__main__":
         print("End Out:", end_out)
         print("Step Out:", step_out)
         
-        
-        
+        #signalFunc = create_function_reference("function."+selected_option)
+        signalFunc =function.func5
+        x_Values_IN = np.arange(start_in, end_in, step_in)
+        dataPRE = generate_function_values(signalFunc,start_in,end_in,step_in)
+        x_Values_OUT = np.arange(start_out, end_out, step_out)
+        dataPOST = generate_ifft_points(compute_fft(dataPRE),start_out,end_out,step_out)
+        plot_points(x_Values_IN,dataPRE,"Donnees avant")
+        plot_points(x_Values_OUT,dataPOST,"Donnees apres")
+
 
     app = tk.Tk()
     app.title("Function Generator")
