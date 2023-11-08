@@ -2,6 +2,7 @@ from function_library import function
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fft import ifft
+from scipy import signal
 
 
 def addZeros(data,coef):
@@ -9,6 +10,7 @@ def addZeros(data,coef):
     for i in range(len(data)):
         res[coef*i]=data[i]
     return res
+
 def generate_function_values(func, start, stop, step):
     """
     Generate an array of function values over a specified range with a given step size.
@@ -48,6 +50,17 @@ def compute_fft(input_array):
     fft_result = np.fft.fft(input_array)
 
     return fft_result
+
+def filter_Fft(x):
+    # Define the cutoff frequency and the filter order
+    cutoff_freq = 10  # Adjust this according to your requirements
+    filter_order = 4  # Adjust this according to your requirements
+
+    # Design the low pass filter
+    b, a = signal.butter(filter_order, cutoff_freq, fs=1, btype='lowpass')
+
+    # Apply the low pass filter to the input signal
+    return signal.lfilter(b, a, x)
 
 def generate_ifft_points(fft_data, start, stop, step):
     """
@@ -135,6 +148,7 @@ if __name__ == "__main__":
         x_Values_IN = np.arange(start_in, end_in, step_in)
         dataPRE = generate_function_values(signalFunc,start_in,end_in,step_in)
         modified_Data = addZeros(dataPRE,int(step_in/step_out))
+        modified_Data = filter_Fft(modified_Data)
         num_Of_Out_Points = len(modified_Data)
         x_Values_OUT = np.linspace(start_out,end_out,num_Of_Out_Points)
         dataPOST = generate_ifft_points(compute_fft(modified_Data),start_out,end_out,step_out)
