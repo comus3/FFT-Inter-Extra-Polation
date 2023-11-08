@@ -4,6 +4,11 @@ import matplotlib.pyplot as plt
 from scipy.fft import ifft
 
 
+def addZeros(data,coef):
+    res = np.zeros(len(data)*(coef))
+    for i in range(len(data)):
+        res[coef*i]=data[i]
+    return res
 def generate_function_values(func, start, stop, step):
     """
     Generate an array of function values over a specified range with a given step size.
@@ -129,8 +134,10 @@ if __name__ == "__main__":
         signalFunc =function.func5
         x_Values_IN = np.arange(start_in, end_in, step_in)
         dataPRE = generate_function_values(signalFunc,start_in,end_in,step_in)
-        x_Values_OUT = np.arange(start_out, end_out, step_out)
-        dataPOST = generate_ifft_points(compute_fft(dataPRE),start_out,end_out,step_out)
+        modified_Data = addZeros(dataPRE,int(step_in/step_out))
+        num_Of_Out_Points = len(modified_Data)
+        x_Values_OUT = np.linspace(start_out,end_out,num_Of_Out_Points)
+        dataPOST = generate_ifft_points(compute_fft(modified_Data),start_out,end_out,step_out)
         plot_points(x_Values_IN,dataPRE,"Donnees avant")
         plot_points(x_Values_OUT,dataPOST,"Donnees apres")
 
